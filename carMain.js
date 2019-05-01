@@ -36,6 +36,8 @@ function getMostPopular(arr){
     ).pop();
 }
 
+console.log(getMostPopular(monthsBought));
+
 addToReports("Month in which the most amount of cars are sold: June");
 
 // Which salesperson sold the most cars?
@@ -47,12 +49,27 @@ addToReports(`The salesperson who sold the most cars is: ${getMostPopular(salesp
 
 // Which salesperson made the most profit?
 const mostProfit = carData.map(car => {
-    return {salesperson: `${car.sales_agent.last_name}`,
-            profit: `${car.gross_profit}`}
+    return {salesperson: car.sales_agent.last_name,
+            profit: car.gross_profit}
 }); 
 mostProfit.sort((a, b) => (a.salesperson > b.salesperson) ? 1 : -1);
-console.log(mostProfit);
-// addToReports(`The salesperson who made the most profit was: ${getMostPopular(banks)}`);
+console.log("mostProfit", mostProfit);
+
+var result = _.chain(mostProfit).groupBy('salesperson').map(function (v, i) {
+    return {
+        salesperson: i,
+        profit: _.map(v, 'profit').reduce((totalNum, currentNum) => totalNum += currentNum).toFixed(2)
+    }
+ }).value();
+
+console.log("profff", result);
+
+result.sort(function (a, b) {
+        return b.profit - a.profit;
+});
+
+addToReports(`The salesperson who made the most profit was ${result[0].salesperson} with $${result[0].profit} in sales`);
+
 
 // Which model was the most popular?
 const popModels = carData.map(car => {
